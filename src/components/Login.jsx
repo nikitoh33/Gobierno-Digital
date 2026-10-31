@@ -16,7 +16,10 @@ import {
 } from 'lucide-react';
 
 export default function Login({ onLoginSuccess }) {
-  const [activeTab, setActiveTab] = useState('facial'); // 'facial' | 'mi_argentina' | 'arca'
+  // Flag para activar o desactivar reconocimiento facial fácilmente sin borrar su código
+  const ENABLE_FACIAL_RECOGNITION = false;
+
+  const [activeTab, setActiveTab] = useState('mi_argentina'); // 'mi_argentina' | 'arca' | 'facial'
   
   // Campos del formulario tradicional
   const [identifier, setIdentifier] = useState(''); // CUIL / CUIT
@@ -208,26 +211,28 @@ export default function Login({ onLoginSuccess }) {
               </p>
             </div>
 
-            {/* Selector de Pestañas (3 Vías: Facial + Mi Argentina + Clave Fiscal) */}
+            {/* Selector de Pestañas */}
             <div className="mt-6">
-              <div className="grid grid-cols-3 p-1 bg-gray-100 rounded-lg border border-gray-200 text-[11px] sm:text-xs font-semibold gap-0.5">
+              <div className={`grid ${ENABLE_FACIAL_RECOGNITION ? 'grid-cols-3' : 'grid-cols-2'} p-1 bg-gray-100 rounded-lg border border-gray-200 text-xs sm:text-sm font-semibold gap-0.5`}>
                 
-                {/* Pestaña Reconocimiento Facial */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveTab('facial');
-                    setErrorMessage('');
-                  }}
-                  className={`py-2 px-1.5 rounded-md transition-all flex flex-col sm:flex-row items-center justify-center gap-1 cursor-pointer text-center ${
-                    activeTab === 'facial'
-                      ? 'bg-white text-[#0B2341] shadow-sm font-bold border border-gray-200'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  <ScanFace className="w-4 h-4 text-[#0072BB] shrink-0" />
-                  <span className="truncate">Rostro RENAPER</span>
-                </button>
+                {/* Pestaña Reconocimiento Facial (Solo visible si ENABLE_FACIAL_RECOGNITION = true) */}
+                {ENABLE_FACIAL_RECOGNITION && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveTab('facial');
+                      setErrorMessage('');
+                    }}
+                    className={`py-2 px-1.5 rounded-md transition-all flex flex-col sm:flex-row items-center justify-center gap-1 cursor-pointer text-center ${
+                      activeTab === 'facial'
+                        ? 'bg-white text-[#0B2341] shadow-sm font-bold border border-gray-200'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    <ScanFace className="w-4 h-4 text-[#0072BB] shrink-0" />
+                    <span className="truncate">Rostro RENAPER</span>
+                  </button>
+                )}
 
                 {/* Pestaña Mi Argentina */}
                 <button
@@ -265,8 +270,8 @@ export default function Login({ onLoginSuccess }) {
               </div>
             </div>
 
-            {/* SECCIÓN 1: RECONOCIMIENTO FACIAL BIOMÉTRICO */}
-            {activeTab === 'facial' && (
+            {/* SECCIÓN 1: RECONOCIMIENTO FACIAL BIOMÉTRICO (Desactivado condicionalmente) */}
+            {ENABLE_FACIAL_RECOGNITION && activeTab === 'facial' && (
               <div className="mt-5 space-y-4">
                 
                 {/* Visor de Cámara con Retícula Biométrica */}
