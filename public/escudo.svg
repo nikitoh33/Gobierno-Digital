@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120" width="100" height="120">
+  <!-- Sun of May rays & face -->
+  <g id="sol" fill="#F6B40E" stroke="#B87333" stroke-width="0.8">
+    <circle cx="50" cy="22" r="9" fill="#FDB813"/>
+    <path d="M50 4 L50 11 M50 33 L50 40 M32 22 L39 22 M61 22 L68 22 M37 9 L42 15 M58 29 L63 35 M37 35 L42 29 M58 15 L63 9" stroke="#FDB813" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Face details -->
+    <circle cx="47" cy="20" r="1" fill="#78350F"/>
+    <circle cx="53" cy="20" r="1" fill="#78350F"/>
+    <path d="M47 25 Q50 27 53 25" stroke="#78350F" stroke-width="1" fill="none"/>
+  </g>
+  <!-- Laurel wreath -->
+  <g id="laureles" fill="#2E7D32" stroke="#1B5E20" stroke-width="0.5">
+    <path d="M22 45 C15 65 18 90 48 108 C42 98 25 80 26 48 Z"/>
+    <path d="M78 45 C85 65 82 90 52 108 C58 98 75 80 74 48 Z"/>
+    <!-- Ribbon at bottom -->
+    <path d="M42 106 Q50 112 58 106 Q50 115 42 106 Z" fill="#75AADB" stroke="#2B6CB0"/>
+  </g>
+  <!-- Shield Oval -->
+  <g id="escudo">
+    <clipPath id="ovalClip">
+      <ellipse cx="50" cy="66" rx="26" ry="32"/>
+    </clipPath>
+    <!-- Oval border -->
+    <ellipse cx="50" cy="66" rx="27" ry="33" fill="#D4AF37" stroke="#996515" stroke-width="1.2"/>
+    <g clip-path="url(#ovalClip)">
+      <!-- Top half: Celeste -->
+      <rect x="20" y="30" width="60" height="36" fill="#75AADB"/>
+      <!-- Bottom half: White -->
+      <rect x="20" y="66" width="60" height="36" fill="#FFFFFF"/>
+      <!-- Pike / Pica -->
+      <line x1="50" y1="42" x2="50" y2="92" stroke="#8D5B4C" stroke-width="3"/>
+      <!-- Hands shaking -->
+      <ellipse cx="46" cy="66" rx="6" ry="4" fill="#FAD0C4" stroke="#D48B70" stroke-width="0.8"/>
+      <ellipse cx="54" cy="66" rx="6" ry="4" fill="#FAD0C4" stroke="#D48B70" stroke-width="0.8"/>
+      <!-- Phrygian Cap (Gorro Frigio) -->
+      <path d="M44 47 C44 41 54 39 57 43 C58 45 56 48 48 48 C45 48 44 47 44 47 Z" fill="#E53935" stroke="#B71C1C" stroke-width="0.8"/>
+      <circle cx="56.5" cy="42" r="1.8" fill="#E53935"/>
+    </g>
+  </g>
+</svg>
+
