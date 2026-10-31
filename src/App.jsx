@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
+import Login from './components/Login';
 import BusinessList from './components/BusinessList';
 import AssociateBusinessModal from './components/AssociateBusinessModal';
 import ClaimWizard from './components/ClaimWizard';
@@ -22,6 +23,10 @@ import {
 } from 'lucide-react';
 
 export default function App() {
+  // Estado de Autenticación de Usuario (paso previo al Dashboard)
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState(mockUser);
+
   // Estado de Comercios (persistido en localStorage; reseteado a los 2 comercios base)
   const [businesses, setBusinesses] = useState(() => {
     try {
@@ -138,13 +143,37 @@ export default function App() {
     setActiveClaim(null);
   };
 
+  const handleLoginSuccess = (userData) => {
+    if (userData) {
+      setCurrentUser(prev => ({
+        ...prev,
+        ...userData
+      }));
+    }
+    setIsAuthenticated(true);
+    setCurrentView('dashboard');
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setCurrentView('dashboard');
+    setSelectedBusiness(null);
+    setActiveClaim(null);
+  };
+
+  // Si no está autenticado, renderizar exclusivamente el componente de Login institucional
+  if (!isAuthenticated) {
+    return <Login onLoginSuccess={handleLoginSuccess} />;
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-[#F8F9FA] text-[#1F2937]">
       {/* Header Institucional Fiel a Argentina.gob.ar con navegación al inicio y perfil */}
       <Header 
-        user={mockUser} 
+        user={currentUser} 
         onGoHome={handleBackToDashboard} 
         onOpenProfile={handleOpenProfile} 
+        onLogout={handleLogout}
       />
 
       {/* Contenedor Principal */}

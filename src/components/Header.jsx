@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { User, ShieldCheck, ChevronDown, AlertTriangle, Building2, ExternalLink, ArrowRight } from 'lucide-react';
+import { User, ShieldCheck, ChevronDown, AlertTriangle, Building2, ExternalLink, ArrowRight, LogOut } from 'lucide-react';
 import { mockUser } from '../data/mockData';
 
-export default function Header({ user = mockUser, onGoHome, onOpenProfile }) {
+export default function Header({ user = mockUser, onGoHome, onOpenProfile, onLogout }) {
   const [showUserPopover, setShowUserPopover] = useState(false);
 
   return (
@@ -123,6 +123,21 @@ export default function Header({ user = mockUser, onGoHome, onOpenProfile }) {
                     <span>Ver Mi Perfil Completo</span>
                     <ArrowRight className="w-3 h-3" />
                   </button>
+
+                  {onLogout && (
+                    <button
+                      onClick={() => {
+                        setShowUserPopover(false);
+                        onLogout();
+                      }}
+                      className="w-full text-center py-2 px-3 text-xs font-bold text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                      title="Cerrar sesión actual"
+                    >
+                      <LogOut className="w-3.5 h-3.5 text-red-600" />
+                      <span>Cerrar Sesión</span>
+                    </button>
+                  )}
+
                   <button 
                     onClick={() => setShowUserPopover(false)}
                     className="w-full text-center py-1.5 text-xs font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded cursor-pointer"
