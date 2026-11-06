@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
 import { 
-  Building2, 
   Wind, 
   CloudRain, 
   CloudLightning, 
-  Calendar, 
-  Clock, 
   FileText, 
   Camera, 
   MapPin, 
@@ -13,22 +10,21 @@ import {
   AlertTriangle, 
   ArrowLeft, 
   ArrowRight, 
-  ShieldCheck, 
-  UploadCloud, 
-  Trash2,
-  HelpCircle,
-  Sparkles
+  Trash2
 } from 'lucide-react';
 
 export default function ClaimWizard({ business, onCancel, onSubmitClaim }) {
   const [step, setStep] = useState(1);
 
   // Fechas límites: hoy y hace máximo 30 días (1 mes)
-  const today = new Date();
-  const maxDate = today.toISOString().split('T')[0];
-  const oneMonthAgo = new Date();
-  oneMonthAgo.setDate(today.getDate() - 30);
-  const minDate = oneMonthAgo.toISOString().split('T')[0];
+  const [{ minDate, maxDate }] = useState(() => {
+    const today = new Date();
+    const max = today.toISOString().split('T')[0];
+    const oneMonthAgo = new Date(today);
+    oneMonthAgo.setDate(today.getDate() - 30);
+    const min = oneMonthAgo.toISOString().split('T')[0];
+    return { minDate: min, maxDate: max };
+  });
 
   // Form State
   const [contingencyType, setContingencyType] = useState('Viento Zonda');

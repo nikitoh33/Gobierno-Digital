@@ -7,19 +7,12 @@ import {
   FileText, 
   Mail, 
   Phone, 
-  MapPin, 
-  Calendar, 
-  Lock, 
   CheckCircle2, 
   Printer, 
-  ExternalLink,
-  CreditCard,
-  AlertOctagon,
-  ShieldAlert,
-  Hash,
-  Trash2,
-  RefreshCw,
-  AlertTriangle
+  AlertOctagon, 
+  Trash2, 
+  RefreshCw, 
+  AlertTriangle 
 } from 'lucide-react';
 
 export default function UserProfileView({ 

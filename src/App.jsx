@@ -9,16 +9,9 @@ import UserProfileView from './components/UserProfileView';
 import Footer from './components/Footer';
 import { initialBusinesses, mockUser } from './data/mockData';
 import { 
-  Building2, 
   Wind, 
   FileText, 
-  ShieldAlert, 
-  CheckCircle, 
-  ArrowRight, 
-  Clock,
-  User,
-  ShieldCheck,
-  Trash2,
+  Trash2, 
   AlertTriangle
 } from 'lucide-react';
 
@@ -131,16 +124,6 @@ export default function App() {
       }
       return b;
     }));
-  };
-
-  const handleResetData = () => {
-    localStorage.removeItem('mendo_businesses_v4');
-    localStorage.removeItem('mendo_claims');
-    setBusinesses(initialBusinesses);
-    setClaims([]);
-    setCurrentView('dashboard');
-    setSelectedBusiness(null);
-    setActiveClaim(null);
   };
 
   const handleLoginSuccess = (userData) => {

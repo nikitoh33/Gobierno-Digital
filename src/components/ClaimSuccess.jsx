@@ -3,23 +3,18 @@ import {
   CheckCircle2, 
   Download, 
   ArrowLeft, 
-  Printer, 
-  ShieldCheck, 
-  Building2, 
   FileCheck2, 
-  Calendar, 
-  Clock, 
-  MapPin, 
   Copy, 
   Check, 
   Trash2, 
-  AlertTriangle,
-  Landmark
+  AlertTriangle 
 } from 'lucide-react';
 
 export default function ClaimSuccess({ claim, onBackToDashboard, onDeleteClaim }) {
   const [copied, setCopied] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [issuedAt] = useState(() => `${new Date().toLocaleDateString('es-AR')} - ${new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })} hs`);
+  const [officialHash] = useState(() => Math.random().toString(36).substring(2, 15).toUpperCase());
 
   const handleCopyCode = () => {
     if (claim?.trackingCode) {
@@ -62,7 +57,7 @@ export default function ClaimSuccess({ claim, onBackToDashboard, onDeleteClaim }
           <div className="text-right">
             <span className="text-[10px] font-bold uppercase text-gray-600 block">Fecha y Hora de Emisión:</span>
             <span className="text-xs font-mono font-bold text-gray-900">
-              {new Date().toLocaleDateString('es-AR')} - {new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })} hs
+              {issuedAt}
             </span>
           </div>
         </div>
@@ -192,7 +187,7 @@ export default function ClaimSuccess({ claim, onBackToDashboard, onDeleteClaim }
             <div>
               <p className="font-bold text-gray-800">Firma y Validación Digital:</p>
               <p>Mesa de Entradas Electrónica - Sistema MendoRecupera</p>
-              <p className="font-mono text-[8.5px]">Hash Oficial: SHA256:{Math.random().toString(36).substring(2, 15).toUpperCase()}</p>
+              <p className="font-mono text-[8.5px]">Hash Oficial: SHA256:{officialHash}</p>
             </div>
             <div className="text-right">
               <p className="font-bold text-gray-800">Ley 25.326 y Ley 27.275</p>

@@ -7,7 +7,8 @@ import {
   ShieldCheck, 
   X,
   FileCheck,
-  UserCheck
+  UserCheck,
+  AlertTriangle
 } from 'lucide-react';
 import { publicRecordsDatabase, mockUser } from '../data/mockData';
 
@@ -16,12 +17,44 @@ export default function AssociateBusinessModal({ isOpen, onClose, onAddBusiness 
   const [currentStep, setCurrentStep] = useState(0); // 0: Idle, 1: ARCA, 2: ATM, 3: Municipal, 4: Done
   const [isSearching, setIsSearching] = useState(false);
   const [foundBusiness, setFoundBusiness] = useState(null);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [simulateDebt, setSimulateDebt] = useState(false);
 
   if (!isOpen) return null;
 
+  const handleToggleDebt = (e) => {
+    const checked = e.target.checked;
+    setSimulateDebt(checked);
+    if (foundBusiness) {
+      setFoundBusiness(prev => {
+        if (!prev) return null;
+        if (checked) {
+          return {
+            ...prev,
+            estado: "BLOQUEADO",
+            estadoFiscal: "BLOQUEADO",
+            tieneDeuda: true,
+            motivoBloqueo: "Deuda en Tasas Municipales y ATM Mendoza",
+            detalleDeuda: [
+              `Municipalidad de Mendoza: Tasa de Comercio e Higiene y Derecho de Inspección (Padrón N° ${prev.padronMunicipal || "11045"}) - Deuda impaga: $41.800 ARS.`,
+              "ATM Mendoza: Impuesto a los Ingresos Brutos Régimen General - Deuda líquida exigible: $92.600 ARS."
+            ]
+          };
+        } else {
+          const rest = { ...prev };
+          delete rest.motivoBloqueo;
+          delete rest.detalleDeuda;
+          return {
+            ...rest,
+            estado: "HABILITADO",
+            estadoFiscal: "HABILITADO",
+            tieneDeuda: false
+          };
+        }
+      });
+    }
+  };
+
   const handleValidate = () => {
-    setErrorMessage('');
     setFoundBusiness(null);
     setIsSearching(true);
     setCurrentStep(1);
@@ -57,9 +90,14 @@ export default function AssociateBusinessModal({ isOpen, onClose, onAddBusiness 
               direccion: match.direccion,
               rubro: match.rubro,
               habilitacion: match.habilitacion,
-              estado: "HABILITADO",
-              estadoFiscal: "HABILITADO",
-              tieneDeuda: false,
+              estado: simulateDebt ? "BLOQUEADO" : "HABILITADO",
+              estadoFiscal: simulateDebt ? "BLOQUEADO" : "HABILITADO",
+              tieneDeuda: simulateDebt,
+              motivoBloqueo: simulateDebt ? "Deuda en Tasas Municipales y ATM Mendoza" : undefined,
+              detalleDeuda: simulateDebt ? [
+                `Municipalidad de Mendoza: Tasa de Comercio e Higiene y Derecho de Inspección (Padrón N° ${match.padronMunicipal}) - Deuda impaga: $38.400 ARS.`,
+                "ATM Mendoza: Impuesto a los Ingresos Brutos Régimen General - Deuda líquida exigible: $92.600 ARS."
+              ] : undefined,
               antiguedad: "5 años",
               superficie: "140 m²"
             });
@@ -74,9 +112,14 @@ export default function AssociateBusinessModal({ isOpen, onClose, onAddBusiness 
               direccion: "Calle San Juan 780, Ciudad de Mendoza",
               rubro: "Comercio Minorista / Venta de Artículos Varios",
               habilitacion: `Expediente N° ${cleanInput}-M-2025`,
-              estado: "HABILITADO",
-              estadoFiscal: "HABILITADO",
-              tieneDeuda: false,
+              estado: simulateDebt ? "BLOQUEADO" : "HABILITADO",
+              estadoFiscal: simulateDebt ? "BLOQUEADO" : "HABILITADO",
+              tieneDeuda: simulateDebt,
+              motivoBloqueo: simulateDebt ? "Deuda en Tasas Municipales y ATM Mendoza" : undefined,
+              detalleDeuda: simulateDebt ? [
+                `Municipalidad de Mendoza: Tasa de Comercio e Higiene y Derecho de Inspección (Padrón N° ${cleanInput || "11045"}) - Deuda impaga: $41.800 ARS.`,
+                "ATM Mendoza: Impuesto a los Ingresos Brutos - Períodos fiscales impagos: $85.300 ARS."
+              ] : undefined,
               antiguedad: "3 años",
               superficie: "95 m²"
             });
@@ -236,8 +279,12 @@ export default function AssociateBusinessModal({ isOpen, onClose, onAddBusiness 
                   </span>
                 </div>
                 {currentStep > 2 && (
-                  <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
-                    Sin deuda exigible
+                  <span className={`text-[11px] font-semibold px-2 py-0.5 rounded ${
+                    simulateDebt 
+                      ? 'text-red-700 bg-red-100' 
+                      : 'text-emerald-700 bg-emerald-50'
+                  }`}>
+                    {simulateDebt ? 'Deuda detectada' : 'Sin deuda exigible'}
                   </span>
                 )}
               </div>
@@ -246,7 +293,7 @@ export default function AssociateBusinessModal({ isOpen, onClose, onAddBusiness 
               <div className="flex items-center justify-between text-xs">
                 <div className="flex items-center gap-2.5">
                   {currentStep > 3 ? (
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <CheckCircle2 className={`w-4 h-4 shrink-0 ${simulateDebt ? 'text-amber-600' : 'text-emerald-600'}`} />
                   ) : currentStep === 3 ? (
                     <Loader2 className="w-4 h-4 text-[#0072BB] animate-spin shrink-0" />
                   ) : (
@@ -257,8 +304,12 @@ export default function AssociateBusinessModal({ isOpen, onClose, onAddBusiness 
                   </span>
                 </div>
                 {currentStep > 3 && (
-                  <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
-                    Habilitado
+                  <span className={`text-[11px] font-semibold px-2 py-0.5 rounded ${
+                    simulateDebt 
+                      ? 'text-amber-800 bg-amber-100' 
+                      : 'text-emerald-700 bg-emerald-50'
+                  }`}>
+                    {simulateDebt ? 'Tasas pendientes' : 'Habilitado'}
                   </span>
                 )}
               </div>
@@ -267,16 +318,51 @@ export default function AssociateBusinessModal({ isOpen, onClose, onAddBusiness 
 
           {/* Resultado de la Búsqueda y Datos Recuperados */}
           {foundBusiness && (
-            <div className="bg-emerald-50/70 border-2 border-emerald-300 rounded-xl p-4 text-xs space-y-2.5 animate-in fade-in duration-300">
+            <div className={`border-2 rounded-xl p-4 text-xs space-y-2.5 animate-in fade-in duration-300 ${
+              foundBusiness.tieneDeuda 
+                ? 'bg-amber-50/70 border-amber-300' 
+                : 'bg-emerald-50/70 border-emerald-300'
+            }`}>
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-emerald-900 font-bold">
-                  <ShieldCheck className="w-5 h-5 text-emerald-600" />
-                  <span>Establecimiento Validado Exitosamente</span>
+                <div className={`flex items-center gap-2 font-bold ${
+                  foundBusiness.tieneDeuda ? 'text-amber-900' : 'text-emerald-900'
+                }`}>
+                  {foundBusiness.tieneDeuda ? (
+                    <AlertTriangle className="w-5 h-5 text-amber-600" />
+                  ) : (
+                    <ShieldCheck className="w-5 h-5 text-emerald-600" />
+                  )}
+                  <span>
+                    {foundBusiness.tieneDeuda 
+                      ? 'Establecimiento Validado (Con Deuda Registrada)' 
+                      : 'Establecimiento Validado Exitosamente'}
+                  </span>
                 </div>
-                <span className="bg-emerald-200 text-emerald-900 px-2.5 py-0.5 rounded-full font-bold text-[10px]">
-                  APTO ASOCIACIÓN
+                <span className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] ${
+                  foundBusiness.tieneDeuda 
+                    ? 'bg-red-200 text-red-900' 
+                    : 'bg-emerald-200 text-emerald-900'
+                }`}>
+                  {foundBusiness.tieneDeuda ? 'CON DEUDA FISCAL' : 'APTO ASOCIACIÓN'}
                 </span>
               </div>
+
+              {foundBusiness.tieneDeuda && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-2.5 text-red-900 text-[11px] leading-tight space-y-1">
+                  <div className="font-bold flex items-center gap-1.5 text-red-700">
+                    <AlertTriangle className="w-3.5 h-3.5" />
+                    <span>Inconsistencias tributarias detectadas:</span>
+                  </div>
+                  <ul className="list-disc list-inside text-red-800 space-y-0.5">
+                    {foundBusiness.detalleDeuda?.map((item, idx) => (
+                      <li key={idx}>{item}</li>
+                    ))}
+                  </ul>
+                  <p className="text-[10px] text-gray-500 italic pt-0.5">
+                    * Se incorporará a su nómina de comercios pero figurará bloqueado hasta regularizar las deudas.
+                  </p>
+                </div>
+              )}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-gray-700 pt-1">
                 <div>
@@ -297,7 +383,11 @@ export default function AssociateBusinessModal({ isOpen, onClose, onAddBusiness 
                 </div>
                 <div>
                   <span className="text-gray-500 block">Habilitación Municipal:</span>
-                  <span className="font-medium text-emerald-800 font-bold">{foundBusiness.habilitacion}</span>
+                  <span className={`font-medium font-bold ${
+                    foundBusiness.tieneDeuda ? 'text-amber-800' : 'text-emerald-800'
+                  }`}>
+                    {foundBusiness.habilitacion}
+                  </span>
                 </div>
               </div>
             </div>
@@ -305,24 +395,39 @@ export default function AssociateBusinessModal({ isOpen, onClose, onAddBusiness 
         </div>
 
         {/* Botonera de Cierre / Confirmación */}
-        <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 pt-4 border-t border-gray-200 mt-5">
-          <button
-            type="button"
-            onClick={onClose}
-            className="w-full sm:w-auto px-4 py-2.5 text-xs font-semibold text-gray-600 hover:text-gray-800 rounded-lg hover:bg-gray-100 cursor-pointer text-center"
-          >
-            Cancelar
-          </button>
-          {foundBusiness && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-gray-200 mt-5">
+          {/* Checklist discreto / escondido para simular deuda */}
+          <label className="flex items-center gap-2 cursor-pointer select-none group opacity-70 hover:opacity-100 transition-opacity">
+            <input
+              type="checkbox"
+              checked={simulateDebt}
+              onChange={handleToggleDebt}
+              className="w-3.5 h-3.5 rounded border-gray-300 text-red-600 focus:ring-red-500 cursor-pointer accent-red-600"
+            />
+            <span className="text-[11px] text-gray-500 group-hover:text-gray-700 font-medium">
+              Simular generación con deuda pendiente (Testing)
+            </span>
+          </label>
+
+          <div className="flex flex-col-reverse sm:flex-row items-center gap-2.5 sm:gap-3 w-full sm:w-auto justify-end">
             <button
               type="button"
-              onClick={handleConfirmAdd}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-bold px-5 py-2.5 rounded-lg text-xs shadow-md transition-all focus:ring-2 focus:ring-[#2E7D32]/50 hover:scale-[1.02] cursor-pointer"
+              onClick={onClose}
+              className="w-full sm:w-auto px-4 py-2.5 text-xs font-semibold text-gray-600 hover:text-gray-800 rounded-lg hover:bg-gray-100 cursor-pointer text-center"
             >
-              <FileCheck className="w-4 h-4" />
-              <span>Confirmar y Sumar a Mis Comercios</span>
+              Cancelar
             </button>
-          )}
+            {foundBusiness && (
+              <button
+                type="button"
+                onClick={handleConfirmAdd}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-bold px-5 py-2.5 rounded-lg text-xs shadow-md transition-all focus:ring-2 focus:ring-[#2E7D32]/50 hover:scale-[1.02] cursor-pointer"
+              >
+                <FileCheck className="w-4 h-4" />
+                <span>Confirmar y Sumar a Mis Comercios</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>

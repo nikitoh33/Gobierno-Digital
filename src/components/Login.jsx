@@ -6,13 +6,12 @@ import {
   CheckCircle2, 
   Loader2, 
   AlertCircle, 
-  Sparkles,
-  Lock,
-  ArrowRight,
-  ScanFace,
-  Camera,
-  RefreshCw,
-  VideoOff
+  Sparkles, 
+  Lock, 
+  ArrowRight, 
+  ScanFace, 
+  Camera, 
+  VideoOff 
 } from 'lucide-react';
 
 export default function Login({ onLoginSuccess }) {
@@ -40,32 +39,33 @@ export default function Login({ onLoginSuccess }) {
 
   // Iniciar / Detener cámara web según la pestaña activa
   useEffect(() => {
+    if (activeTab !== 'facial') {
+      return;
+    }
+
     let stream = null;
 
-    if (activeTab === 'facial') {
-      navigator.mediaDevices?.getUserMedia({ video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' } })
-        .then((s) => {
-          stream = s;
-          if (videoRef.current) {
-            videoRef.current.srcObject = s;
-          }
-          setCameraActive(true);
-          setCameraError(false);
-        })
-        .catch(() => {
-          setCameraActive(false);
-          setCameraError(true);
-        });
-    } else {
-      setCameraActive(false);
-      setIsScanningFace(false);
-      setFacialStep(0);
-    }
+    navigator.mediaDevices?.getUserMedia({ video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' } })
+      .then((s) => {
+        stream = s;
+        if (videoRef.current) {
+          videoRef.current.srcObject = s;
+        }
+        setCameraActive(true);
+        setCameraError(false);
+      })
+      .catch(() => {
+        setCameraActive(false);
+        setCameraError(true);
+      });
 
     return () => {
       if (stream) {
         stream.getTracks().forEach(track => track.stop());
       }
+      setCameraActive(false);
+      setIsScanningFace(false);
+      setFacialStep(0);
     };
   }, [activeTab]);
 

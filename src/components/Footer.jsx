@@ -1,5 +1,5 @@
 import React from 'react';
-import { PhoneCall, Shield, FileText, ExternalLink, HeartHandshake, Landmark } from 'lucide-react';
+import { PhoneCall, Shield, FileText, ExternalLink, Landmark } from 'lucide-react';
 
 export default function Footer() {
   return (

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, ShieldCheck, ChevronDown, AlertTriangle, Building2, ExternalLink, ArrowRight, LogOut } from 'lucide-react';
+import { User, ShieldCheck, ChevronDown, AlertTriangle, ArrowRight, LogOut } from 'lucide-react';
 import { mockUser } from '../data/mockData';
 
 export default function Header({ user = mockUser, onGoHome, onOpenProfile, onLogout }) {
